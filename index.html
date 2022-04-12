@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Create Code</title>
+  <style>
+    html, body, .container {
+      width: 100%;
+      height: 100%;
+      font-size: 26px;
+    }
+   #code-container {
+    display: flex;
+    min-width: 400px;
+    height: 100%;
+    overflow: auto;
+    white-space: pre;
+  }
+
+  #code-print {
+    flex: 0.5;
+    font-size: 12px;
+    border-right: 1px solid lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #code-execution {
+    flex: 0.5;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #code-results {
+    flex: 0.5;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  #code-console {
+    flex: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  </style>
+</head>
+
+<body mode="blockly">
+  <div>
+    <!-- <h1>Welcome</h1>
+    <p>Test to move around a bit and get a feeling of your surrounding. There is a test task that you can do. Given two numbers (in0, in1), the task output should be the sum of these numbers.</p> -->
+    <h1>Task 1</h1>
+    <p>Given the sides of a rectangle (in0, in1), the area should be returned. If at least one of the sides are negative, the output should be 0.</p>
+  </div>
+  <div id="blocklyDiv" style="height: 680px; width: 1400px; "></div>
+      <xml id="toolbox" style="display: none">
+        <category name="logic" colour="210">
+          <block type="controls_if"></block>
+          <block type="logic_compare"></block>
+          <block type="logic_operation"></block>
+          <block type="logic_negate"></block>
+          <block type="logic_boolean"></block>
+          <block type="logic_null"></block>
+        </category>
+        <category name="math" colour="230">
+          <block type="math_number"></block>
+          <block type="math_arithmetic">
+            <value name="A">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="B">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+        <category name="text" colour="160">
+          <block type="text"></block>
+        </category>
+        <category name="variables" colour="330" custom="VARIABLE">
+        </category>
+        <category name="output" colour="400">
+          <block type="task_output"></block>
+        </category>
+      </xml>
+
+    </div>
+  <div id="blocklyDiv"></div>
+  <div id="code-container">
+    <div id="code-print"></div>
+    <div id="code-execution">
+      <div id="code-results">
+      </div>
+      <div id="code-console"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/blockly"></script>
+  <script>
+
+  Blockly.Extensions.register(
+    'disable_dialog',
+    function() { // this refers to the block that the extension is being run on
+      var thisBlock = this;
+      this.setTooltip(function() {
+        var parent = thisBlock.getParent();
+        return (parent && parent.getInputsInline() && parent.tooltip) ||
+            Blockly.Msg.MATH_NUMBER_TOOLTIP;
+      });
+    }); 
+
+    Blockly.Blocks["task_output"] = {
+      init: function () {
+        this.appendValueInput("INPUT1").appendField("Test variable: ", "FIELD1");
+        this.setColour(230);
+        this.setInputsInline(true);
+      },
+    };
+  
+    Blockly.JavaScript["task_output"] = function (block) {
+      const [inputA] = block.inputList;
+      const targetBlockA = inputA.connection.targetBlock();
+  
+      let varA;
+  
+      if (targetBlockA) {
+
+        varA = Blockly.JavaScript.nameDB_.getName(
+          targetBlockA.getFieldValue("VAR"),
+          Blockly.Names.NameType.VARIABLE
+        );
+      }
+  
+      return `testOutputValue(${varA}, expectedOutput, allInputs);`;
+    };
+  
+    function testOutputValue(outputValue, expectedOutput, inputs)
+    {
+      if (inputs == null)
+      {
+        errors.push(`No input data is used!`);
+      }
+      else if (outputValue == null){
+        errors.push(`Given the inputs (${inputs}), expected (${expectedOutput}) but got nothing`);
+      }
+      else if (outputValue !== expectedOutput) {
+        errors.push(`Given the inputs (${inputs}), expected (${expectedOutput}) but got ${outputValue}`);
+      }
+      numberOfTestsExecuted++;
+    }
+  
+  </script>
+  
+
+  <!-- Custom blocks -->
+
+  <script>Blockly.inject('blocklyDiv', {
+    toolbox: document.getElementById('toolbox'),
+    scrollbars: true
+  })</script>
+  <script>
+      // var testCases = [
+      //   {
+      //     inputs: [3, 5],
+      //     output: 8,
+      //   },
+      //   {
+      //     inputs: [2, 4],
+      //     output: 6
+      //   },
+      // ];
+  </script>
+  <script>
+    var testCases = [
+          {
+            inputs: [5, 6],
+            output: 30,
+          },
+          {
+            inputs: [2, 4],
+            output: 8
+          },
+          {
+            inputs: [0, 0],
+            output: 0
+          },
+          {
+            inputs: [-1, 1],
+            output: 0
+          },
+          {
+            inputs: [1, -1],
+            output: 0
+          },
+        ];
+  </script>
+  <!-- INSERT_SCRIPT --> 
+  <script>
+
+  </script>
+
+  <script>
+
+    const workspace = Blockly.getMainWorkspace();
+    
+    var errors = [];
+    var numberOfTestsExecuted = 0;
+
+    // const taskOutputBlock = workspace.newBlock("task_output");
+    // taskOutputBlock.moveBy(0, 10000)
+
+    const in0 = workspace.createVariable("in0");
+    const in1 = workspace.createVariable("in1");
+    const out = workspace.createVariable("out");
+
+
+    // const in0Block = workspace.newBlock("variables_get");
+    // in0Block.setFieldValue(in0.id_, "VAR");
+    // in0Block.moveBy(0, 50);
+
+    function Update() {
+      try {
+      //////
+
+      ////////////
+      const xml = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
+      const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
+      //Blockly.Xml.domToWorkspace(xml, workspace);
+      document.getElementById("code-print").innerHTML = "";
+      document.getElementById("code-print").append(code);
+    
+      runAllTestCases(code);
+
+
+      } catch (error) {
+        console.log(error);
+        document.getElementById("code-console").append("\n" + error);
+      }
+    }
+
+    function runAllTestCases(code)
+    {
+      errors = [];
+      numberOfTestsExecuted = 0;
+      
+      if (typeof testCases === 'undefined') return;
+      if (testCases.length == 0) return;
+
+      for (const testCase of testCases) {
+        runTestCase(code, testCase, errors);
+      }
+
+      var codeResultContainer = document.getElementById("code-results");
+      if (errors.length == 0 && numberOfTestsExecuted == testCases.length) {
+          codeResultContainer.style.background = "green";
+          codeResultContainer.textContent = "Good job!";
+      } else {
+          codeResultContainer.style.background = "red";
+          codeResultContainer.textContent = "Wrong! \n " + (errors[0] ?? "");
+      }
+    }
+
+    function runTestCase(code, testCase, errors)
+    {
+      try {
+        var codeWithInjectedTest = injectTestDataToCode(code, testCase);
+        console.log(codeWithInjectedTest);
+        eval(codeWithInjectedTest);
+      } catch (error) {
+        console.log(error);
+        errors.push(error);
+      }
+    }
+
+    function injectTestDataToCode(code, testCase)
+    {
+      // We assume that the variable deceleration is the first thing in the code;
+      var inputValueCode = "";
+      var allInputsVariable = "var allInputs = [" + testCase.inputs + "];";
+      for (let index = 0; index < testCase.inputs.length; index++) {
+        const inputValue = testCase.inputs[index];
+        inputValueCode += "in" + index + " = " + inputValue + ";";
+      }
+      outputValueCode = "var expectedOutput = " + testCase.output + ";";
+
+      var variableDeclarationEndIndex = code.indexOf(";") + 1;
+      return code.substring(0, variableDeclarationEndIndex) + inputValueCode + outputValueCode + allInputsVariable + code.substring(variableDeclarationEndIndex);
+    }
+    
+
+    workspace.addChangeListener(() => {
+      Update(workspace);
+    });
+
+
+  </script>
+    
+</body>
+</html>
